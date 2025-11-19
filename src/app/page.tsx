@@ -8,7 +8,7 @@ import type { Message } from "@/app/lib/types";
 
 const initialMessages: Message[] = [
   { id: 1, text: "Hey! How's it going?", sender: 'them', timestamp: "10:00 AM" },
-  { id: 2, text: "Hey Zoe! I'm doing great, thanks for asking. Just working on a new project. How about you?", sender: 'me', timestamp: "10:01 AM" },
+  { id: 2, text: "Hey A.I Astrologer! I'm doing great, thanks for asking. Just working on a new project. How about you?", sender: 'me', timestamp: "10:01 AM" },
   { id: 3, text: "That sounds exciting! I'm good, just enjoying a cup of coffee. What's the project about?", sender: 'them', timestamp: "10:02 AM" },
   { id: 4, text: "It's a modern messaging app UI, actually. Pretty meta, right? Trying to get the chat bubbles just right.", sender: 'me', timestamp: "10:03 AM" },
 ];
