@@ -5,8 +5,16 @@ import { ChatHeader } from "@/components/chat-header";
 import { ChatMessages } from "@/components/chat-messages";
 import { ChatInput } from "@/components/chat-input";
 import type { Message } from "@/app/lib/types";
+import { BirthDetailsForm } from "@/components/birth-details-form";
 
-const initialMessages: Message[] = [];
+const initialMessages: Message[] = [
+  {
+    id: 1,
+    sender: 'them',
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    component: <BirthDetailsForm />
+  }
+];
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);

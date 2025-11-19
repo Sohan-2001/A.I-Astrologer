@@ -1,6 +1,7 @@
 export type Message = {
   id: number;
-  text: string;
+  text?: string;
   sender: 'me' | 'them';
   timestamp: string;
+  component?: React.ReactNode;
 };

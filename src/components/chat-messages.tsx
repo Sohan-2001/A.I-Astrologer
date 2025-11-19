@@ -38,7 +38,11 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
                   : "bg-card text-card-foreground rounded-bl-none border"
               )}
             >
-              <p className="text-sm break-words">{message.text}</p>
+              {message.component ? (
+                message.component
+              ) : (
+                <p className="text-sm break-words">{message.text}</p>
+              )}
               <p className="text-xs mt-1 text-right opacity-70">
                 {message.timestamp}
               </p>
