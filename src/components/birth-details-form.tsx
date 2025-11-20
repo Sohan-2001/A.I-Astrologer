@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth, useUser, useFirestore } from "@/firebase"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { collection, addDoc } from "firebase/firestore"
+import { collection, addDoc, setDoc, doc } from "firebase/firestore"
 import { getPrediction } from "@/ai/flows/get-prediction"
 
 const FormSchema = z.object({
@@ -58,11 +58,17 @@ export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     let currentUser = user;
 
-    if (!currentUser) {
+    if (!currentUser && auth) {
       try {
         const provider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth, provider);
         currentUser = result.user;
+        await setDoc(doc(firestore, "users", currentUser.uid), {
+            displayName: currentUser.displayName,
+            email: currentUser.email,
+            id: currentUser.uid,
+            profilePictureUrl: currentUser.photoURL,
+        }, { merge: true });
         toast({
           title: "Signed In!",
           description: `Welcome, ${result.user.displayName}!`,

@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -40,7 +41,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
           className="flex-1 resize-none max-h-40 min-h-[40px] rounded-2xl bg-card border-input focus-visible:ring-1"
           disabled={disabled}
         />
-        <Button type="submit" size="icon" className="rounded-full h-10 w-10 shrink-0" disabled={disabled}>
+        <Button type="submit" size="icon" className="rounded-full h-10 w-10 shrink-0" disabled={disabled || !message.trim()}>
           <SendHorizontal className="h-5 w-5" />
           <span className="sr-only">Send message</span>
         </Button>
