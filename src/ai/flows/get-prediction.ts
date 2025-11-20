@@ -33,7 +33,7 @@ const prompt = ai.definePrompt({
   name: 'getPredictionPrompt',
   input: { schema: GetPredictionInputSchema },
   output: { schema: GetPredictionOutputSchema },
-  prompt: `You are an expert astrologer. Using B.V. Raman Ayanamsa, analyze the following birth details and provide major life predictions with approximate timings. Break the output into clear sections for Health, Wealth, Career, Relationships, and Major Life Events.
+  prompt: `You are an expert astrologer. Using B.V. Raman Ayanamsa, analyze the following birth details and provide major life predictions. Respond ONLY with a valid JSON object matching the output schema. For each key in the JSON, provide the analysis for that section. Do not use any markdown formatting like '*' or '#' in the text.
 
 Name: {{{name}}}
 Birth Date: {{{birthDate}}}
