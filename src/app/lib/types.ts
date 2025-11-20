@@ -1,7 +1,10 @@
+import type { Timestamp } from 'firebase/firestore';
+
 export type Message = {
-  id: number;
+  id: string;
   text?: string;
   sender: 'me' | 'them';
-  timestamp: string;
+  senderId: string;
+  timestamp: string | Date | Timestamp;
   component?: React.ReactNode;
 };

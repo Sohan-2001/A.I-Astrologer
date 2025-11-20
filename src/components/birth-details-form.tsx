@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -14,9 +15,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth, useUser, useFirestore, addDocumentNonBlocking } from "@/firebase"
+import { useAuth, useUser, useFirestore } from "@/firebase"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { collection } from "firebase/firestore"
+import { collection, addDoc } from "firebase/firestore"
 import { getPrediction } from "@/ai/flows/get-prediction"
 
 const FormSchema = z.object({
@@ -80,7 +81,7 @@ export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
     if (currentUser && firestore) {
       try {
         const birthDetailsCollection = collection(firestore, 'users', currentUser.uid, 'birthDetails');
-        await addDocumentNonBlocking(birthDetailsCollection, {
+        await addDoc(birthDetailsCollection, {
           ...data,
           userId: currentUser.uid,
           createdAt: new Date(),
@@ -155,8 +156,7 @@ export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
           name="birthCity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>City of birth</FormLabel>
-              <FormControl>
+              <FormLabel>City of birth</FormLabel>              <FormControl>
                 <Input placeholder="Your birth city" {...field} />
               </FormControl>
               <FormMessage />
