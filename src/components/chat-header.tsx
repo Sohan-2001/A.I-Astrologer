@@ -5,13 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { MoreVertical, LogOut } from "lucide-react"
-import { useAuth } from "@/firebase";
+import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 
 export function ChatHeader() {
   const avatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
   const auth = useAuth();
+  const { user } = useUser();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
@@ -44,10 +45,12 @@ export function ChatHeader() {
         </div>
       </div>
       <div className="ml-auto flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="rounded-full" onClick={handleSignOut}>
-          <LogOut className="h-5 w-5" />
-          <span className="sr-only">Sign Out</span>
-        </Button>
+        {user && (
+          <Button variant="ghost" size="icon" className="rounded-full" onClick={handleSignOut}>
+            <LogOut className="h-5 w-5" />
+            <span className="sr-only">Sign Out</span>
+          </Button>
+        )}
         <Button variant="ghost" size="icon" className="rounded-full">
           <MoreVertical className="h-5 w-5" />
           <span className="sr-only">More options</span>

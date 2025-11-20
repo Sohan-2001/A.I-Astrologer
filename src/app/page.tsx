@@ -7,13 +7,18 @@ import { ChatMessages } from "@/components/chat-messages";
 import { ChatInput } from "@/components/chat-input";
 import type { Message } from "@/app/lib/types";
 import { BirthDetailsForm } from "@/components/birth-details-form";
-import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { addDoc, collection, serverTimestamp, query, orderBy, deleteDoc, getDocs } from "firebase/firestore";
+import { useUser, useFirestore, useCollection, useMemoFirebase, useAuth } from "@/firebase";
+import { addDoc, collection, serverTimestamp, query, orderBy, deleteDoc, getDocs, setDoc, doc } from "firebase/firestore";
 import { chat } from "@/ai/flows/chat";
+import { Button } from "@/components/ui/button";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
+  const auth = useAuth();
+  const { toast } = useToast();
   const [isMounted, setIsMounted] = useState(false);
 
   const messagesCollection = useMemoFirebase(() => 
@@ -84,6 +89,32 @@ export default function Home() {
     await addDoc(messagesCollection, predictionMessageWithTimestamp);
   }, [user, firestore, messagesCollection]);
 
+  const handleSignIn = async () => {
+    if (!auth || !firestore) return;
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const currentUser = result.user;
+      await setDoc(doc(firestore, "users", currentUser.uid), {
+          displayName: currentUser.displayName,
+          email: currentUser.email,
+          id: currentUser.uid,
+          profilePictureUrl: currentUser.photoURL,
+      }, { merge: true });
+      toast({
+        title: "Signed In!",
+        description: `Welcome, ${result.user.displayName}!`,
+      });
+    } catch (error) {
+      console.error("Authentication error:", error);
+      toast({
+        variant: "destructive",
+        title: "Authentication Failed",
+        description: "Could not sign in with Google. Please try again.",
+      });
+    }
+  };
+
   
   const displayMessages = useMemo(() => {
     const formattedMessages = messages?.map(msg => ({
@@ -106,8 +137,24 @@ export default function Home() {
   }, [messages, isMounted, isUserLoading, user, isLoadingMessages, handleNewPrediction]);
 
 
-  if (!isMounted) {
-    return null;
+  if (!isMounted || isUserLoading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-background">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center bg-background">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold font-headline mb-2">Welcome to A.I. Astrologer</h1>
+          <p className="text-muted-foreground">Sign in to get your personalized astrological reading.</p>
+        </div>
+        <Button onClick={handleSignIn}>Sign in with Google</Button>
+      </div>
+    );
   }
 
   const isChatDisabled = !user || (!isLoadingMessages && messages?.length === 0);
@@ -122,4 +169,3 @@ export default function Home() {
     </div>
   );
 }
-
