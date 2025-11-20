@@ -33,7 +33,7 @@ const prompt = ai.definePrompt({
   name: 'getPredictionPrompt',
   input: { schema: GetPredictionInputSchema },
   output: { schema: GetPredictionOutputSchema },
-  prompt: `You are an expert astrologer. Based on the following birth details, provide a one-paragraph prediction of important occurrences based on B.V. Raman Ayanamsa.
+  prompt: `You are an expert astrologer. Using B.V. Raman Ayanamsa, analyze the following birth details and provide major life predictions with approximate timings. Break the output into clear sections for Health, Wealth, Career, Relationships, and Major Life Events.
 
 Name: {{{name}}}
 Birth Date: {{{birthDate}}}
