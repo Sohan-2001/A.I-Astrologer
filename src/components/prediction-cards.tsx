@@ -47,7 +47,7 @@ export function PredictionCards({ predictionData }: PredictionCardsProps) {
         return (
           <Card key={key} className="overflow-hidden bg-card/50 border-border/30">
             <CardHeader>
-              <CardTitle className="text-lg font-serif font-bold">{toTitleCase(key)}</CardTitle>
+              <CardTitle className="text-lg font-bold">{toTitleCase(key)}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-foreground/80 whitespace-pre-wrap">{renderValueWithBreaks(value)}</p>

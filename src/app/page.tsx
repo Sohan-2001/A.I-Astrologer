@@ -185,7 +185,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/70" />
         <div className="relative z-10 flex flex-col items-center text-center text-white p-4">
           <Sparkles className="w-16 h-16 mb-4 text-primary" />
-          <h1 className="text-5xl md:text-7xl font-bold font-serif mb-4 animate-fade-in-down">
+          <h1 className="text-5xl md:text-7xl font-bold mb-4 animate-fade-in-down">
             A.I. Astrologer
           </h1>
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-8 animate-fade-in-up">
