@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -115,7 +116,7 @@ export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <p className="text-sm text-card-foreground mb-4">
+        <p className="text-sm text-muted-foreground mb-4 font-serif">
           To begin, please provide your birth details.
         </p>
         <FormField
@@ -169,7 +170,7 @@ export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">Get my reading</Button>
+        <Button type="submit" className="w-full font-semibold">Get my reading</Button>
       </form>
     </Form>
   )

@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useState } from "react"
@@ -30,7 +31,7 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
   }
 
   return (
-    <footer className="p-3 border-t bg-background/95 backdrop-blur-sm sticky bottom-0">
+    <footer className="p-3 border-t bg-background/80 backdrop-blur-sm sticky bottom-0">
       <form onSubmit={handleSubmit} className="flex items-end gap-3">
         <Textarea
           placeholder={disabled ? "Please complete the form above to start chatting." : "Type a message..."}
@@ -38,10 +39,10 @@ export function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           rows={1}
-          className="flex-1 resize-none max-h-40 min-h-[40px] rounded-2xl bg-card border-input focus-visible:ring-1"
+          className="flex-1 resize-none max-h-40 min-h-[40px] rounded-2xl bg-card border-input focus-visible:ring-1 focus-visible:ring-primary/50"
           disabled={disabled}
         />
-        <Button type="submit" size="icon" className="rounded-full h-10 w-10 shrink-0" disabled={disabled || !message.trim()}>
+        <Button type="submit" size="icon" className="rounded-full h-10 w-10 shrink-0 bg-primary/90 hover:bg-primary" disabled={disabled || !message.trim()}>
           <SendHorizontal className="h-5 w-5" />
           <span className="sr-only">Send message</span>
         </Button>

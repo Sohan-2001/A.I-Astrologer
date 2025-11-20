@@ -21,7 +21,7 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
 
   return (
     <ScrollArea className="flex-1" ref={scrollAreaRef}>
-      <div className="p-4 space-y-4">
+      <div className="p-4 sm:p-6 space-y-6">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -32,18 +32,18 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
           >
             <div
               className={cn(
-                "max-w-xs md:max-w-md lg:max-w-2xl rounded-2xl px-4 py-2 shadow-sm",
+                "max-w-xs md:max-w-md lg:max-w-2xl rounded-2xl px-4 py-3 shadow-md",
                 message.sender === "me"
-                  ? "bg-primary text-primary-foreground rounded-br-none"
-                  : "bg-card text-card-foreground rounded-bl-none border"
+                  ? "bg-primary/90 text-primary-foreground rounded-br-none"
+                  : "bg-card/80 text-card-foreground rounded-bl-none border border-border/50 backdrop-blur-sm"
               )}
             >
               {message.component ? (
                 message.component
               ) : (
-                <p className="text-sm break-words">{message.text}</p>
+                <p className="text-sm whitespace-pre-wrap">{message.text}</p>
               )}
-              <p className="text-xs mt-1 text-right opacity-70">
+              <p className="text-xs mt-2 text-right opacity-60">
                 {message.timestamp}
               </p>
             </div>
