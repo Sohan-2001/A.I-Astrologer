@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useAuth, useUser, useFirestore } from "@/firebase"
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { collection, addDoc, setDoc, doc } from "firebase/firestore"
-import { getPrediction } from "@/ai/flows/get-prediction"
+import { getPrediction, GetPredictionOutput } from "@/ai/flows/get-prediction"
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -36,7 +36,7 @@ const FormSchema = z.object({
 })
 
 interface BirthDetailsFormProps {
-  onPrediction: (prediction: string) => void;
+  onPrediction: (prediction: GetPredictionOutput) => void;
 }
 
 export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
@@ -98,8 +98,8 @@ export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
           description: "The stars are aligning...",
         });
 
-        const prediction = await getPrediction(data);
-        onPrediction(prediction.predictionText);
+        // Pass the form data directly to the onPrediction handler
+        onPrediction(data);
 
       } catch (error) {
         console.error("Firestore or Prediction error:", error);

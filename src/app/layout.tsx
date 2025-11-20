@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'Chirp Chat',
-  description: 'A modern messaging app UI.',
+  title: 'A.I. Astrologer',
+  description: 'Get personalized astrological predictions and chat with an AI astrologer.',
 };
 
 export default function RootLayout({

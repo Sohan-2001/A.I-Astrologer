@@ -13,6 +13,8 @@ import { chat } from "@/ai/flows/chat";
 import { Button } from "@/components/ui/button";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
+import { PredictionCards } from "@/components/prediction-cards";
+import { getPrediction } from "@/ai/flows/get-prediction";
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
@@ -71,7 +73,7 @@ export default function Home() {
     await addDoc(messagesCollection, aiMessageWithTimestamp);
   };
   
-  const handleNewPrediction = useCallback(async (prediction: string) => {
+  const handleNewPrediction = useCallback(async (formData: any) => {
     if (!user || !firestore || !messagesCollection) return;
 
     // Clear any previous messages if a new prediction is made.
@@ -79,9 +81,11 @@ export default function Home() {
     for (const doc of existingMessages.docs) {
       await deleteDoc(doc.ref);
     }
+    
+    const predictionData = await getPrediction(formData);
 
     const predictionMessage: Omit<Message, 'id' | 'timestamp'> = {
-      text: prediction,
+      predictionData,
       sender: 'them',
       senderId: 'ai-astrologer'
     };
@@ -117,16 +121,29 @@ export default function Home() {
 
   
   const displayMessages = useMemo(() => {
-    const formattedMessages = messages?.map(msg => ({
-      ...msg,
-      timestamp: msg.timestamp ? (msg.timestamp as any).toDate ? (msg.timestamp as any).toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...'
-    })) || [];
+    const formattedMessages = messages?.map(msg => {
+       const timestamp = msg.timestamp ? (msg.timestamp as any).toDate ? (msg.timestamp as any).toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...';
+
+      let component;
+      if (msg.predictionData) {
+        component = <PredictionCards predictionData={msg.predictionData} />;
+      } else if (msg.component) {
+        component = msg.component
+      }
+
+      return {
+        ...msg,
+        timestamp,
+        component
+      }
+    }) || [];
     
     if (isMounted && !isUserLoading && user && messages?.length === 0 && !isLoadingMessages) {
        return [
          {
            id: "form-1",
            sender: 'them' as const,
+           senderId: 'ai-astrologer',
            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
            component: <BirthDetailsForm onPrediction={handleNewPrediction} />
          }

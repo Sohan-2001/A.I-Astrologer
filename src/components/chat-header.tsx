@@ -16,6 +16,7 @@ export function ChatHeader() {
   const { toast } = useToast();
 
   const handleSignOut = async () => {
+    if (!auth) return;
     try {
       await signOut(auth);
       toast({
@@ -40,7 +41,7 @@ export function ChatHeader() {
           <AvatarFallback>AI</AvatarFallback>
         </Avatar>
         <div>
-          <h2 className="font-bold text-lg font-headline">A.I Astrologer</h2>
+          <h2 className="font-bold text-lg font-headline">A.I. Astrologer</h2>
           <p className="text-sm text-muted-foreground">Online</p>
         </div>
       </div>
