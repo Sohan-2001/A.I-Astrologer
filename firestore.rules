@@ -1,0 +1,86 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All data is either private to a specific user (profiles, predictions) or is created by a specific user (chat messages) with clear ownership attribution. Access is granted based on the authenticated user's ID matching the path or an ownership field within the document.
+ * Data Structure: User profiles and their private predictions are organized hierarchically under the /users/{userId} path, enabling simple and secure path-based authorization. A single top-level /messages collection stores all chat messages from all users.
+ * Key Security Decisions:
+ * - User Enumeration is Disallowed: The top-level /users collection cannot be listed, protecting user privacy.
+ * - Strict Ownership: A user can only access and manage their own /users/{userId} document and any subcollections within it, such as /predictions.
+ * - Secure Chat Collection: The global /messages collection is designed to prevent data leakage. Any authenticated user can create a message, but listing the entire collection is explicitly forbidden. This enforces the "rules are not filters" principle, ensuring queries are secure by design.
+ * - Immutability: Chat messages cannot be updated, preserving conversation history. Senders may delete their own messages.
+ * Denormalization for Authorization: The /messages collection relies on a `senderId` field within each message document. This denormalization allows for efficient and secure ownership checks for delete operations without needing to read other documents.
+ * Structural Segregation: Private user data (profiles, predictions) is structurally separated from the more public, shared data (messages) by using a user-specific path for private data and a top-level collection for shared data.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions to improve readability and maintainability.
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the requesting user's UID matches the provided userId.
+     * This is the foundation of the user-ownership model.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * A robust check for update/delete operations, ensuring the document
+     * exists and the user is the owner. Prevents operations on non-existent data.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Manages user profile documents. Only the user themselves can read, create, update, or delete their own profile. Listing all users is forbidden.
+     * @path /users/{userId}
+     * @allow (create) An authenticated user creating their own profile document: `auth.uid == 'user123'` on `/users/user123`.
+     * @deny (get) An authenticated user trying to read another user's profile: `auth.uid == 'user456'` on `/users/user123`.
+     * @principle Restricts access to a user's own data tree, preventing unauthorized data access and user enumeration.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Manages a user's private astrological predictions. Access is strictly limited to the owner of the parent user document.
+       * @path /users/{userId}/predictions/{predictionId}
+       * @allow (create) A user creating a prediction for themselves: `auth.uid == 'user123'` on `/users/user123/predictions/pred456`.
+       * @deny (list) An authenticated user trying to list another user's predictions: `auth.uid == 'user456'` on `/users/user123/predictions`.
+       * @principle Enforces strict data ownership within a user-specific subcollection using path-based security.
+       */
+      match /predictions/{predictionId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+    /**
+     * @description Manages chat messages in a global collection. Any authenticated user can create a message, but they can only delete their own. Listing all messages is forbidden to protect privacy.
+     * @path /messages/{messageId}
+     * @allow (create) An authenticated user creating a message with their own `senderId`: `auth.uid == 'user123'` creating `{ senderId: 'user123', ... }`.
+     * @deny (list) Any user attempting to list the entire `/messages` collection.
+     * @principle Allows creation by any authenticated user but prevents broad data listing to protect privacy and enforce query security.
+     */
+    match /messages/{messageId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+      allow update: if false;
+      allow delete: if resource != null && request.auth.uid == resource.data.senderId;
+    }
+  }
+}
