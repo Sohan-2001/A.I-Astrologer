@@ -37,9 +37,8 @@ const chatFlow = ai.defineFlow(
 
     const systemPrompt = `You are an expert astrologer. You have already provided an initial reading. Now, continue the conversation, answering the user's follow-up questions. Maintain the context of the conversation.`;
 
-    const model = ai.getModel('googleai/gemini-2.5-flash');
-
-    const response = await model.generate({
+    const response = await ai.generate({
+      model: 'googleai/gemini-2.5-flash',
       system: systemPrompt,
       history: history,
       prompt: message,
