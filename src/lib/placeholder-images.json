@@ -2,14 +2,14 @@
   "placeholderImages": [
     {
       "id": "user-avatar",
-      "description": "Avatar of A.I Astrologer",
+      "description": "Avatar of the A.I Astrologer, a wise-looking woman with stars in the background.",
       "imageUrl": "https://images.unsplash.com/photo-1546961329-78bef0414d7c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MzUzOTkzOHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "woman portrait"
     },
     {
       "id": "landing-page-bg",
-      "description": "A beautiful image of a galaxy with swirling stars and nebulae, in deep blues and purples.",
-      "imageUrl": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnYWxheHl8ZW58MHx8fHwxNzYzNTM5OTM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "description": "A beautiful and vibrant image of a swirling galaxy with stars and nebulae, representing the cosmos and astrology.",
+      "imageUrl": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnYWxheHl8ZW58MHx8fHwxNzYzNTM5OTM4fDA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "galaxy stars"
     }
   ]
