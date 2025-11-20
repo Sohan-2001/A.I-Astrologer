@@ -6,22 +6,23 @@ import { ChatMessages } from "@/components/chat-messages";
 import { ChatInput } from "@/components/chat-input";
 import type { Message } from "@/app/lib/types";
 import { BirthDetailsForm } from "@/components/birth-details-form";
-
-const initialMessages: Message[] = [
-  {
-    id: 1,
-    sender: 'them',
-    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    component: <BirthDetailsForm />
-  }
-];
+import { getPrediction } from "@/ai/flows/get-prediction";
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+    // Show the initial form message only on the client
+    setMessages([
+      {
+        id: 1,
+        sender: 'them',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        component: <BirthDetailsForm onPrediction={handleNewPrediction} />
+      }
+    ]);
   }, []);
 
   const handleSendMessage = (text: string) => {
@@ -32,6 +33,20 @@ export default function Home() {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
     setMessages(prev => [...prev, newMessage]);
+  };
+
+  const handleNewPrediction = (prediction: string) => {
+    const newMessage: Message = {
+      id: messages.length + 2, // ensure unique id
+      text: prediction,
+      sender: 'them',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+    // Remove the form and add the prediction
+    setMessages(prev => [
+      ...prev.filter(msg => !msg.component), 
+      newMessage
+    ]);
   };
   
   if (!isMounted) {

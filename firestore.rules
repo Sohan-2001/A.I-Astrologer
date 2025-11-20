@@ -66,6 +66,17 @@ service cloud.firestore {
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
         allow delete: if isExistingOwner(userId);
       }
+      
+      /**
+       * @description Manages a user's private birth details. Access is strictly limited to the owner of the parent user document.
+       * @path /users/{userId}/birthDetails/{birthDetailId}
+       * @allow (create) A user creating their birth details: `auth.uid == 'user123'` on `/users/user123/birthDetails/detail456`.
+       * @deny (list) An authenticated user trying to list another user's birth details: `auth.uid == 'user456'` on `/users/user123/birthDetails`.
+       * @principle Enforces strict data ownership within a user-specific subcollection using path-based security.
+       */
+      match /birthDetails/{birthDetailId} {
+        allow get, list, create, update, delete: if isOwner(userId);
+      }
     }
 
     /**

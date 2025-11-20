@@ -14,6 +14,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth, useUser, useFirestore, addDocumentNonBlocking } from "@/firebase"
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { collection } from "firebase/firestore"
+import { getPrediction } from "@/ai/flows/get-prediction"
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -30,8 +34,15 @@ const FormSchema = z.object({
   }),
 })
 
-export function BirthDetailsForm() {
+interface BirthDetailsFormProps {
+  onPrediction: (prediction: string) => void;
+}
+
+export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
   const { toast } = useToast()
+  const auth = useAuth();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -43,12 +54,55 @@ export function BirthDetailsForm() {
     },
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "Details Submitted!",
-      description: "The stars are aligning...",
-    })
-    console.log(data)
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    let currentUser = user;
+
+    if (!currentUser) {
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        currentUser = result.user;
+        toast({
+          title: "Signed In!",
+          description: `Welcome, ${result.user.displayName}!`,
+        });
+      } catch (error) {
+        console.error("Authentication error:", error);
+        toast({
+          variant: "destructive",
+          title: "Authentication Failed",
+          description: "Could not sign in with Google. Please try again.",
+        });
+        return;
+      }
+    }
+
+    if (currentUser && firestore) {
+      try {
+        const birthDetailsCollection = collection(firestore, 'users', currentUser.uid, 'birthDetails');
+        await addDocumentNonBlocking(birthDetailsCollection, {
+          ...data,
+          userId: currentUser.uid,
+          createdAt: new Date(),
+        });
+        
+        toast({
+          title: "Details Submitted!",
+          description: "The stars are aligning...",
+        });
+
+        const prediction = await getPrediction(data);
+        onPrediction(prediction.predictionText);
+
+      } catch (error) {
+        console.error("Firestore or Prediction error:", error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "Could not save details or get prediction.",
+        });
+      }
+    }
   }
 
   return (
