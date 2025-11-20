@@ -14,22 +14,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { CalendarIcon } from "lucide-react"
-import { Calendar } from "@/components/ui/calendar"
-import { format } from "date-fns"
 
 const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  birthDate: z.date({
-    required_error: "A date of birth is required.",
+  birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+    message: "Please enter a date in YYYY-MM-DD format.",
   }),
   birthTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
     message: "Please enter a valid time in HH:MM format.",
@@ -46,6 +37,7 @@ export function BirthDetailsForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
+      birthDate: "",
       birthTime: "",
       birthCity: "",
     },
@@ -82,39 +74,11 @@ export function BirthDetailsForm() {
           control={form.control}
           name="birthDate"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
+            <FormItem>
               <FormLabel>Date of birth</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <FormControl>
+                <Input placeholder="YYYY-MM-DD" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
