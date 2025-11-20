@@ -35,7 +35,7 @@ const chatFlow = ai.defineFlow(
   async (input) => {
     const { history, message } = input;
 
-    const systemPrompt = `You are an expert astrologer. You have already provided an initial reading. Now, continue the conversation, answering the user's follow-up questions. Maintain the context of the conversation.`;
+    const systemPrompt = `You are an expert astrologer. You have already provided an initial reading. Now, you are answering follow-up questions. Keep your answers short and to the point. Only provide the answer, no additional information.`;
 
     const response = await ai.generate({
       model: 'googleai/gemini-2.5-flash',
