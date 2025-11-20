@@ -170,7 +170,7 @@ export function BirthDetailsForm({ onPrediction }: BirthDetailsFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full font-semibold bg-red-600 text-yellow-400 hover:bg-red-700">Get my reading</Button>
+        <Button type="submit" className="w-full font-semibold bg-red-800 text-yellow-400 hover:bg-red-900">Get my reading</Button>
       </form>
     </Form>
   )
