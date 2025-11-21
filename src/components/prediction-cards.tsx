@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -35,6 +36,16 @@ const renderValueWithBreaks = (value: string) => {
   ));
 };
 
+const predictionOrder: (keyof GetPredictionOutput)[] = [
+  'introduction',
+  'major_life_events',
+  'health',
+  'wealth',
+  'career',
+  'relationships',
+  'conclusion',
+];
+
 export function PredictionCards({ predictionData }: PredictionCardsProps) {
   if (!predictionData) {
     return null;
@@ -42,7 +53,8 @@ export function PredictionCards({ predictionData }: PredictionCardsProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      {Object.entries(predictionData).map(([key, value]) => {
+      {predictionOrder.map((key) => {
+        const value = predictionData[key];
         if (!value) return null;
         return (
           <Card key={key} className="overflow-hidden bg-card/50 border-border/30">
