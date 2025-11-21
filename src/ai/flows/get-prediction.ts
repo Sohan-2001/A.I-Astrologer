@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow for generating astrological predictions.
@@ -39,7 +40,7 @@ const prompt = ai.definePrompt({
   name: 'getPredictionPrompt',
   input: { schema: GetPredictionInputSchema },
   output: { schema: GetPredictionOutputSchema },
-  prompt: `You are an expert astrologer. Using B.V. Raman Ayanamsa, analyze the following birth details and provide major life predictions. For each prediction, try to include specific dates, date ranges, or general timelines (e.g., "in your late twenties", "around June 2025"). Respond ONLY with a valid JSON object matching the output schema. For each key in the JSON, provide the analysis for that section. Do not use any markdown formatting like '*' or '#' in the text.
+  prompt: `You are an expert astrologer. Your analysis MUST strictly use the B.V. Raman Ayanamsa system ONLY. Analyze the following birth details and provide major life predictions. For EVERY section of the prediction (introduction, major_life_events, health, wealth, career, relationships), you MUST include specific dates, date ranges, or general timelines (e.g., "in your late twenties", "around June 2025"). Respond ONLY with a valid JSON object matching the output schema. Do not use any markdown formatting like '*' or '#' in the text.
 
 Name: {{{name}}}
 Birth Date: {{{birthDate}}}
