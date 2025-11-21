@@ -45,6 +45,42 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
+  const handleDeleteMessagePair = useCallback(async (messageId: string) => {
+    if (!firestore || !user || !messages) return;
+
+    const messageIndex = messages.findIndex(m => m.id === messageId);
+    if (messageIndex === -1) return;
+
+    const userMessage = messages[messageIndex];
+    // We only allow deleting user's own messages.
+    if (userMessage.sender !== 'me') return;
+
+    try {
+      // Delete the user's message
+      const userMessageRef = doc(firestore, 'users', user.uid, 'messages', messageId);
+      await deleteDoc(userMessageRef);
+
+      // Find and delete the next message if it's from the AI
+      const nextMessage = messages[messageIndex + 1];
+      if (nextMessage && nextMessage.sender === 'them') {
+        const aiMessageRef = doc(firestore, 'users', user.uid, 'messages', nextMessage.id);
+        await deleteDoc(aiMessageRef);
+      }
+       toast({
+        title: "Deleted",
+        description: "The message pair has been removed.",
+      });
+    } catch (error) {
+      console.error("Error deleting messages:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not delete the messages. Please try again.",
+      });
+    }
+  }, [firestore, user, messages, toast]);
+
+
   const handleSendMessage = async (text: string) => {
     if (!user || !firestore || !messagesCollection) return;
 
@@ -142,7 +178,8 @@ export default function Home() {
       return {
         ...msg,
         timestamp,
-        component
+        component,
+        onDelete: handleDeleteMessagePair,
       }
     }) || [];
     
@@ -159,7 +196,7 @@ export default function Home() {
     }
 
     return formattedMessages;
-  }, [messages, isMounted, isUserLoading, user, isLoadingMessages, handleNewPrediction]);
+  }, [messages, isMounted, isUserLoading, user, isLoadingMessages, handleNewPrediction, handleDeleteMessagePair]);
 
 
   if (!isMounted || isUserLoading) {

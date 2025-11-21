@@ -9,4 +9,5 @@ export type Message = {
   timestamp: string | Date | Timestamp;
   component?: React.ReactNode;
   predictionData?: GetPredictionOutput;
+  onDelete?: (messageId: string) => void;
 };
