@@ -20,11 +20,11 @@ export type GetPredictionInput = z.infer<typeof GetPredictionInputSchema>;
 
 const GetPredictionOutputSchema = z.object({
   introduction: z.string().describe("An introduction to the astrological reading."),
+  major_life_events: z.string().describe("Predictions about major life events."),
   health: z.string().describe("Predictions related to health."),
   wealth: z.string().describe("Predictions related to wealth and finance."),
   career: z.string().describe("Predictions related to career and professional life."),
   relationships: z.string().describe("Predictions related to personal relationships."),
-  major_life_events: z.string().describe("Predictions about major life events."),
   conclusion: z.string().describe("A concluding summary of the reading."),
 });
 export type GetPredictionOutput = z.infer<typeof GetPredictionOutputSchema>;
