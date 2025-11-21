@@ -43,6 +43,7 @@ const predictionOrder: (keyof GetPredictionOutput)[] = [
   'wealth',
   'career',
   'relationships',
+  'remedies',
   'conclusion',
 ];
 

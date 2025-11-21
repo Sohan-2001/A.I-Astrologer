@@ -26,6 +26,7 @@ const GetPredictionOutputSchema = z.object({
   wealth: z.string().describe("Predictions related to wealth and finance."),
   career: z.string().describe("Predictions related to career and professional life."),
   relationships: z.string().describe("Predictions related to personal relationships."),
+  remedies: z.string().describe("Suggested remedies like prayers to gods, exercises, and other good deeds to mitigate negative influences and enhance positive ones."),
   conclusion: z.string().describe("A concluding summary of the reading."),
 });
 export type GetPredictionOutput = z.infer<typeof GetPredictionOutputSchema>;
@@ -40,7 +41,7 @@ const prompt = ai.definePrompt({
   name: 'getPredictionPrompt',
   input: { schema: GetPredictionInputSchema },
   output: { schema: GetPredictionOutputSchema },
-  prompt: `You are an expert astrologer. Your analysis MUST strictly use the B.V. Raman Ayanamsa system ONLY. Analyze the following birth details and provide major life predictions. For EVERY section of the prediction (introduction, major_life_events, health, wealth, career, relationships), you MUST include specific dates, date ranges, or general timelines (e.g., "in your late twenties", "around June 2025"). Respond ONLY with a valid JSON object matching the output schema. Do not use any markdown formatting like '*' or '#' in the text.
+  prompt: `You are an expert astrologer. Your analysis MUST strictly use the B.V. Raman Ayanamsa system ONLY. Analyze the following birth details and provide major life predictions. For EVERY section of the prediction (introduction, major_life_events, health, wealth, career, relationships, remedies), you MUST include specific dates, date ranges, or general timelines (e.g., "in your late twenties", "around June 2025"). Under 'remedies', suggest natural remedies like prayers to specific gods, physical exercises, and other good acts. Respond ONLY with a valid JSON object matching the output schema. Do not use any markdown formatting like '*' or '#' in the text.
 
 Name: {{{name}}}
 Birth Date: {{{birthDate}}}
