@@ -36,6 +36,18 @@ service cloud.firestore {
     function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
     }
+    
+    /**
+     * @description Manages feedback submissions. Any authenticated user can submit feedback. Reading, updating, and deleting feedback is disallowed to maintain privacy and data integrity.
+     * @path /feedbacks/{feedbackId}
+     * @allow (create) Any authenticated user can create a feedback document.
+     * @deny (read, update, delete) All other operations are disallowed.
+     * @principle Collects user feedback securely without exposing other users' submissions.
+     */
+    match /feedbacks/{feedbackId} {
+      allow read, update, delete: if false;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
 
     /**
      * @description Manages user profile documents. Only the user themselves can read, create, update, or delete their own profile. Listing all users is forbidden.
@@ -90,3 +102,4 @@ service cloud.firestore {
     }
   }
 }
+    

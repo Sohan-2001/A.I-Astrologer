@@ -2,10 +2,11 @@
 
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
-import { MoreVertical, LogOut, Sun, Moon } from "lucide-react"
+import { MoreVertical, LogOut, Sun, Moon, MessageSquareText } from "lucide-react"
 import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +18,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "next-themes";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { FeedbackForm } from "@/components/feedback-form";
 
 export function ChatHeader() {
   const avatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
@@ -24,6 +33,7 @@ export function ChatHeader() {
   const { user } = useUser();
   const { toast } = useToast();
   const { setTheme } = useTheme();
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const handleSignOut = async () => {
     if (!auth) return;
@@ -59,6 +69,20 @@ export function ChatHeader() {
         </div>
       </div>
       <div className="ml-auto flex items-center gap-1">
+        <Dialog open={isFeedbackOpen} onOpenChange={setIsFeedbackOpen}>
+          <DialogTrigger asChild>
+             <Button variant="ghost" size="sm">
+              <MessageSquareText className="mr-2 h-4 w-4" />
+              Feedback
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Submit Feedback</DialogTitle>
+            </DialogHeader>
+            <FeedbackForm onSubmit={() => setIsFeedbackOpen(false)} />
+          </DialogContent>
+        </Dialog>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -95,3 +119,5 @@ export function ChatHeader() {
     </header>
   )
 }
+
+    

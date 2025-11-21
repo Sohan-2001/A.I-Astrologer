@@ -125,6 +125,31 @@
         "birthCity",
         "userId"
       ]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "type": "object",
+      "description": "Stores user feedback.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user submitting the feedback."
+        },
+        "feedback": {
+          "type": "string",
+          "description": "The content of the feedback."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the feedback was submitted."
+        }
+      },
+      "required": [
+        "userId",
+        "feedback",
+        "createdAt"
+      ]
     }
   },
   "auth": {
@@ -211,8 +236,25 @@
             }
           ]
         }
+      },
+      {
+        "path": "/feedbacks/{feedbackId}",
+        "definition": {
+          "entityName": "Feedback",
+          "schema": {
+            "$ref": "#/backend/entities/Feedback"
+          },
+          "description": "Stores user feedback. Only authenticated users can create feedback.",
+          "params": [
+            {
+              "name": "feedbackId",
+              "description": "The unique identifier for the feedback entry."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to support the Chirp Chat application, focusing on user data, chat messages, and astrological prediction features. It prioritizes security, scalability, and ease of debugging, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and Rules are not Filters (QAPs). \n\nAuthorization Independence is achieved by using path-based ownership for user-specific data (users/{userId}/...), eliminating the need for `get()` calls in security rules to validate ownership. This is crucial for atomic operations and simplifies debugging.\n\nStructural Segregation is enforced by separating user data, messages, predictions and birth details into distinct collections or subcollections. This ensures that documents within a collection share the same security requirements, making rules simpler and more maintainable.\n\nAccess Modeling is standardized with path-based ownership for private user data, predictions and birth details. Chat messages could potentially involve more complex collaboration scenarios, which could be handled with Membership Maps if group chats are added in the future (currently not explicitly requested).\n\nQAPs are addressed by the structural segregation. Listing messages, predictions, or birth details is secure because the structure ensures that users can only access resources they own or are explicitly authorized to view. This is a key aspect of preventing data leakage and ensuring that security rules don't act as filters.\n\nSpecifically, OccurrencesPredictions and BirthDetails are stored in subcollections under each user document (`/users/{userId}/predictions/{predictionId}` and `/users/{userId}/birthDetails/{birthDetailId}`). This enforces path-based ownership: only the user who owns the document can read or write to it. Chat messages are stored in a subcollection under the user, which enforces that a user can only access their own messages."
+    "reasoning": "The Firestore data structure is designed to support the Chirp Chat application, focusing on user data, chat messages, and astrological prediction features. It prioritizes security, scalability, and ease of debugging, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and Rules are not Filters (QAPs). \n\nAuthorization Independence is achieved by using path-based ownership for user-specific data (users/{userId}/...), eliminating the need for `get()` calls in security rules to validate ownership. This is crucial for atomic operations and simplifies debugging.\n\nStructural Segregation is enforced by separating user data, messages, predictions and birth details into distinct collections or subcollections. This ensures that documents within a collection share the same security requirements, making rules simpler and more maintainable.\n\nAccess Modeling is standardized with path-based ownership for private user data, predictions and birth details. Chat messages could potentially involve more complex collaboration scenarios, which could be handled with Membership Maps if group chats are added in the future (currently not explicitly requested).\n\nQAPs are addressed by the structural segregation. Listing messages, predictions, or birth details is secure because the structure ensures that users can only access resources they own or are explicitly authorized to view. This is a key aspect of preventing data leakage and ensuring that security rules don't act as filters.\n\nSpecifically, OccurrencesPredictions and BirthDetails are stored in subcollections under each user document (`/users/{userId}/predictions/{predictionId}` and `/users/{userId}/birthDetails/{birthDetailId}`). This enforces path-based ownership: only the user who owns the document can read or write to it. Chat messages are stored in a subcollection under the user, which enforces that a user can only access their own messages.\n\nA new top-level `feedbacks` collection is added to store user feedback. Security rules allow any authenticated user to create feedback, but disallow reading, updating, or deleting existing feedback to protect privacy and data integrity."
   }
 }
+    
